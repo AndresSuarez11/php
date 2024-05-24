@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ADMIN') {
+    header("Location: login.php");
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,9 +29,9 @@
     <h1>Panel de Administración</h1>
     <nav>
         <a href="categorias.php">Categorías</a>
-        <a href="clientes.php">Clientes</a>
-        <a href="productos.php">Productos</a>
-        <a href="proveedores.php">Proveedores</a>
+        <a href="indexClientes.php">Clientes</a>
+        <a href="indexProductos.php">Productos</a>
+        <a href="indexProveedores.php">Proveedores</a>
     </nav>
     <div id="contenido">
         <h2>Bienvenido al Panel de Administración</h2>

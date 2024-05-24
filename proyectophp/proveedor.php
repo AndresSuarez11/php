@@ -2,55 +2,51 @@
 include 'conexion.php';
 session_start();
 
-// Verificar si el usuario está autenticado y es un cliente
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'CLIENTE') {
+// Verificar si el usuario está autenticado y es un proveedor
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'PROVEEDOR') {
     header("Location: login.php");
     exit();
 }
 
-// Obtener la lista de productos
-$sql = "SELECT * FROM productos WHERE stock > 0";
-$result = $conn->query($sql);
-
-// Procesar la compra
+// Actualizar stock del producto
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_producto = $_POST['id_producto'];
     $cantidad = $_POST['cantidad'];
 
     // Obtener el stock actual del producto
-    $stmt = $conn->prepare("SELECT * FROM productos WHERE id_producto = ?");
+    $stmt = $conn->prepare("SELECT stock FROM productos WHERE id_producto = ?");
     $stmt->bind_param("i", $id_producto);
     $stmt->execute();
-    $producto = $stmt->get_result()->fetch_assoc();
+    $result = $stmt->get_result();
 
-    if ($producto['stock'] >= $cantidad) {
-        $nuevo_stock = $producto['stock'] - $cantidad;
+    if ($result->num_rows == 1) {
+        $producto = $result->fetch_assoc();
+        $nuevo_stock = $producto['stock'] + $cantidad;
 
         // Actualizar el stock del producto
         $updateStmt = $conn->prepare("UPDATE productos SET stock = ? WHERE id_producto = ?");
         $updateStmt->bind_param("ii", $nuevo_stock, $id_producto);
 
         if ($updateStmt->execute()) {
-            // Registrar la compra en el historial
-            $insertStmt = $conn->prepare("INSERT INTO historial_compras (id_cliente, id_producto, cantidad) VALUES (?, ?, ?)");
-            $insertStmt->bind_param("iii", $_SESSION['user_id'], $id_producto, $cantidad);
-            $insertStmt->execute();
-
-            echo "Compra realizada con éxito.";
+            echo "Stock actualizado con éxito.";
         } else {
             echo "Error al actualizar el stock.";
         }
     } else {
-        echo "Stock insuficiente para la cantidad solicitada.";
+        echo "Producto no encontrado.";
     }
 }
+
+// Obtener productos con stock bajo
+$sql = "SELECT * FROM productos WHERE stock <= 10";
+$result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel del Cliente</title>
+    <title>Panel del Proveedor</title>
     <style>
         table {
             width: 100%;
@@ -69,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-    <h1>Comprar Productos</h1>
+    <h1>Productos con Stock Bajo</h1>
     <table>
         <tr>
             <th>ID</th>
@@ -77,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <th>Descripción</th>
             <th>Precio</th>
             <th>Stock</th>
-            <th>Cantidad</th>
             <th>Acciones</th>
         </tr>
         <?php if ($result->num_rows > 0): ?>
@@ -91,15 +86,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <td>
                     <form method="post" style="display:inline;">
                         <input type="hidden" name="id_producto" value="<?php echo $producto['id_producto']; ?>">
-                        <input type="number" name="cantidad" min="1" max="<?php echo $producto['stock']; ?>" required>
-                        <input type="submit" value="Comprar">
+                        <input type="number" name="cantidad" placeholder="Cantidad" required>
+                        <input type="submit" value="Agregar Stock">
                     </form>
                 </td>
             </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="7">No se encontraron productos disponibles</td>
+                <td colspan="6">No se encontraron productos con stock bajo</td>
             </tr>
         <?php endif; ?>
     </table>
