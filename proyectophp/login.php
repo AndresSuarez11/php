@@ -22,21 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Inicio de sesión exitoso
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_role'] = $user['role']; 
-            $_SESSION['user_nombre'] = $user['nombre'];
+            $_SESSION['user_nombre'] = $user['username'];
 
             // Redirigir al usuario según su tipo
             switch ($user['role']) { 
                 case 'ADMIN':
-                    header("Location: ../proyectophp/Admin.php");
+                    header("Location: Admin.php");
                     break;
                 case 'CLIENTE':
-                    header("Location: ../proyectophp/cliente.php");
+                    header("Location: cliente/cliente.php");
                     break;
                 case 'VENDEDOR':
-                    header("Location: ../proyectophp/vendedor.php");
+                    header("Location: vendedor/vendedor.php");
                     break;
                 case 'PROVEEDOR':
-                    header("Location: ../proyectophp/proveedor.php");
+                    header("Location: proveedor/proveedor.php");
                     break;
                 default:
                     echo "Tipo de usuario no reconocido.";

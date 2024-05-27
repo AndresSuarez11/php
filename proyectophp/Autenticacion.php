@@ -17,16 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         switch($user['role']) {
             case 'ADMIN':
-                header("Location: admin.php");
+                header("Location: Admin.php");
                 break;
             case 'CLIENTE':
-                header("Location: cliente.php");
+                header("Location: cliente/cliente.php");
                 break;
             case 'VENDEDOR':
-                header("Location: vendedor.php");
+                header("Location: vendedor/vendedor.php");
                 break;
             case 'PROVEEDOR':
-                header("Location: proveedor.php");
+                header("Location: proveedor/proveedor.php");
                 break;
         }
     } else {
