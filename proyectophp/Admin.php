@@ -14,81 +14,123 @@ if (!isset($_SESSION['user_id']) && $_SESSION['role'] !== 'ADMIN') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-   
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        nav {
-            margin-bottom: 20px;
-        }
-        nav a {
-            margin-right: 10px;
-            text-decoration: none;
-            color: blue;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="script" href="footer.js">
 </head>
 <body>
 
-<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      
-      <h2>Panel de Administracion</h2>
-    </a>
-    <ul class="nav justify-content-end">
+<div class="grid-container">
+      <div class="grid-item-1">
+        <nav class="navbar navbar-light"  style="background-color: #e3f2fd; width: 100%; height: 100%;">
+          <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+              
+              <h1>Panel de Administracion</h1>
+            </a>
+            <ul class="nav justify-content-end">  
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="img/hat-and-glasses-summer-svgrepo-com.svg" height="80px" width="auto" alt="">
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="Admin.php">Admin</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="logout.php">Cerrar sesion</a></li>
+                  </ul>
+                </li>
+        
+                
+          
+            </ul>
+        
+            
+        
+        
+          </div>
+        </nav>
 
-        <li class="nav-item">
-            <a class="nav-link" href="#">Admin#</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="logout.php">Cerrar Sesion</a>
-        </li>
-  
-    </ul>
-
+      </div>
+      <div class="grid-container-menu">
+        <div class="categoria" onclick="window.location.href='categoria/indexCategorias.php'">
+            <img src="img/category-svgrepo-com.svg" alt="Categorias">
+            <p>Categorias</p>
+        </div>
+        <div class="categoria" onclick="window.location.href='cliente/indexClientes.php'">
+            <img src="img/person-svgrepo-com.svg" alt="Clientes">
+            <p>Clientes</p>
+        </div>
+        <div class="categoria" onclick="window.location.href='producto/indexProductos.php'">
+            <img src="img/products-svgrepo-com.svg" alt="Productos">
+            <p>Productos</p>
+        </div>
+        <div class="categoria" onclick="window.location.href='proveedor/indexProveedores.php'">
+            <img src="img/shopping-cart-free-15-svgrepo-com.svg" alt="Proveedores">
+            <p>Proveedores</p>
+        </div>
+        
+    </div>
     
- 
-
-  </div>
-</nav>
+    <!--Contenido-->
+  <div clas="grid-item-contenido">
 
 
-<ul class="nav flex-column">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="categoria/indexCategorias.php">Categorias</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="cliente/indexClientes.php">Clientes</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="producto/indexProductos.php">Productos</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="proveedor/indexProveedores.php">Proveedores</a>
-  </li>
-  <p>Seleccione una de las opciones del menú para administrar los datos.</p>
+      
   
-</ul>
+  
+  
+  
+  </div>
 
 
-<div class="d-flex align-items-start">
-  <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-    <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</button>
-    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</button>
-    <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</button>
-    <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</button>
-  </div>
-  <div class="tab-content" id="v-pills-tabContent">
-    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" ></div>
-    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">...</div>
-    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">...</div>
-    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
-  </div>
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     
 </body>
+
+
+<footer>
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h2>Sobre Nosotros</h2>
+                <p>Somos una empresa dedicada a proporcionar soluciones innovadoras para el mercado moderno. Nuestro objetivo es mejorar la vida de nuestros clientes a través de productos de calidad y un excelente servicio al cliente.</p>
+            </div>
+            <div class="footer-section links">
+                <h2>Enlaces Rápidos</h2>
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Servicios</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h2>Contacto</h2>
+                <ul>
+                    <li>Email: info@ejemplo.com</li>
+                    <li>Teléfono: +34 123 456 789</li>
+                    <li>Dirección: Calle Falsa 123, Ciudad, País</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 </html>
