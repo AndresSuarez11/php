@@ -8,38 +8,15 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'PROVEEDOR') {
     exit();
 }
 
-// Actualizar stock del producto
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id_producto = $_POST['id_producto'];
-    $cantidad = $_POST['cantidad'];
+// Obtener el ID del proveedor desde la sesión
+$id_proveedor = $_SESSION['user_id'];
 
-    // Obtener el stock actual del producto
-    $stmt = $conn->prepare("SELECT stock FROM productos WHERE id_producto = ?");
-    $stmt->bind_param("i", $id_producto);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows == 1) {
-        $producto = $result->fetch_assoc();
-        $nuevo_stock = $producto['stock'] + $cantidad;
-
-        // Actualizar el stock del producto
-        $updateStmt = $conn->prepare("UPDATE productos SET stock = ? WHERE id_producto = ?");
-        $updateStmt->bind_param("ii", $nuevo_stock, $id_producto);
-
-        if ($updateStmt->execute()) {
-            echo "Stock actualizado con éxito.";
-        } else {
-            echo "Error al actualizar el stock.";
-        }
-    } else {
-        echo "Producto no encontrado.";
-    }
-}
-
-// Obtener productos con stock bajo
-$sql = "SELECT * FROM productos WHERE stock <= 10";
-$result = $conn->query($sql);
+// Obtener todos los productos del proveedor
+$sql = "SELECT * FROM productos WHERE id_proveedor = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_proveedor);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +42,7 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
-    <h1>Productos con Stock Bajo</h1>
+    <h1>Productos del Proveedor</h1>
     <table>
         <tr>
             <th>ID</th>
@@ -94,7 +71,7 @@ $result = $conn->query($sql);
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="6">No se encontraron productos con stock bajo</td>
+                <td colspan="6">No se encontraron productos</td>
             </tr>
         <?php endif; ?>
     </table>

@@ -1,55 +1,48 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
+session_start();
 include 'conexion.php';
 
-session_start();
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    // Verificar si las claves están presentes en el array POST
+    $username = isset($_POST['username']) ? $_POST['username'] : null;
+    $password = isset($_POST['password']) ? $_POST['password'] : null;
 
-    // Verificar las credenciales del usuario
-    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Asegúrate de que los campos del formulario están definidos
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-    if ($result->num_rows == 1) {
+        $stmt = $conn->prepare("SELECT id, username, password, role FROM usuarios WHERE username = ?");
+        $stmt->bind_param("s", $username); // "s" indica que el parámetro es de tipo cadena (string)
+        $stmt->execute();
+        $result = $stmt->get_result();
         $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            // Inicio de sesión exitoso
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = $user['role']; 
-            $_SESSION['user_nombre'] = $user['username'];
 
-            // Redirigir al usuario según su tipo
-            switch ($user['role']) { 
-                case 'ADMIN':
-                    header("Location: Admin.php");
-                    break;
-                case 'CLIENTE':
-                    header("Location: cliente/cliente.php");
-                    break;
-                case 'VENDEDOR':
-                    header("Location: vendedor/vendedor.php");
-                    break;
-                case 'PROVEEDOR':
-                    header("Location: proveedor/proveedor.php");
-                    break;
-                default:
-                    echo "Tipo de usuario no reconocido.";
-                    break;
+        if ($user && password_verify($password, $user['password'])) {
+            // Establece las variables de sesión
+            $_SESSION['user_id'] = $user['id_usuario'];
+            $_SESSION['user_role'] = $user['role'];
+
+            // Redirige al usuario según su rol
+            if ($user['role'] == 'CLIENTE') {
+                header("Location: cliente/cliente.php");
+            } elseif ($user['role'] == 'PROVEEDOR') {
+                header("Location: proveedor/proveedor.php");
+            } elseif ($user['role'] == 'VENDEDOR') {
+                header("Location: vendedor/vendedor.php");
+            } elseif ($user['role'] == 'ADMIN') {
+                header("Location: ../proyectophp/admin.php");
             }
             exit();
         } else {
-            $error = "Contraseña incorrecta.";
+            echo "Credenciales incorrectas.";
         }
+        $stmt->close();
     } else {
-        $error = "Correo electrónico no encontrado.";
+        echo "Por favor, complete todos los campos.";
     }
 }
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -60,14 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <h1>Iniciar Sesión</h1>
-    <?php if (isset($error)): ?>
-        <p style="color: red;"><?php echo $error; ?></p>
-    <?php endif; ?>
-    <form method="post">
-        Email: <input type="email" name="email" required><br>
-        Contraseña: <input type="password" name="password" required><br>
-        <input type="submit" value="Iniciar Sesión">
-    </form>
-    <p>¿No tienes una cuenta? <a href="registro.php">Regístrate aquí</a></p>
+    <form method="post" action="login.php">
+    <input type="text" name="username" placeholder="Nombre de usuario">
+    <input type="password" name="password" placeholder="Contraseña">
+    <input type="submit" value="Iniciar sesión">
+</form>
+    <a href="registro.php">Registrarse</a>
 </body>
 </html>
